@@ -2,9 +2,9 @@ import threading
 from tkinter import *
 from tkinter.ttk import *
 
-from JD_spider_link.JdSpider import start_jd_spider
-from JD_spider_link.LoginAndGetCookie import login_and_cookies
-from JD_spider_link.MongoUtil import *
+from JD_spider_link.spider.JdSpider import start_jd_spider
+from JD_spider_link.spider.LoginAndGetCookie import login_and_cookies
+from JD_spider_link.utils.MongoUtil import *
 
 global_driver = None
 page_num = 100  # 最大爬取页数

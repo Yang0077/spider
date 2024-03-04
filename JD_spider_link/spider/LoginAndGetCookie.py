@@ -16,7 +16,7 @@ def login_and_cookies():
     chrome_options.add_experimental_option("detach", True)
     driver = webdriver.Chrome(options=chrome_options)
 
-    cookie_file = 'cookie.txt'
+    cookie_file = '../cookie.txt'
     """
     处理登录和cookie的逻辑。
     如果存在cookie文件，使用cookie登录；否则提示用户登录并保存cookie。
