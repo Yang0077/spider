@@ -2,10 +2,13 @@ import csv
 import time
 
 from bs4 import BeautifulSoup
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
-def start_jd_spider(driver):
+def start_jd_spider(driver, page_num):
+    global comments_count, good_comments_count, medium_comments_count, bad_comments_count, comment_content
+    comments_count = 0
     link = driver.current_url
 
     # 发送请求并检索网页内容
@@ -54,28 +57,47 @@ def start_jd_spider(driver):
             comment_text = str(int(float(comment_text.strip("万")) * 10000))
         bad_comments_count = int(comment_text)
 
+    # 评论内容
+    comment_content = []
+    page_number = 1
+    try:
+        max_pages = int(page_num.get())
+    except TypeError:
+        max_pages = 100
+    while True:
+
+        # comments = web.find_elements_by_xpath('//div[@class="comment-column J-comment-column"]/p')
+        comment_texts = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/p')
+        for comment in comment_texts:
+            comment_content.append(str(comment.text).replace("\n", ";").strip())
+        print(comment_content)
+
+        if page_number == max_pages:
+            break
+
+        try:
+            next_page_button = driver.find_element(By.XPATH, '//div[@class="ui-page"]/a[text()="下一页"]')  # 定位下一页
+            next_page_button.click()
+            time.sleep(3)
+        except NoSuchElementException as e:
+            print(f'ERROR: {e}')
+            break
+
+        page_number += 1
+
+
     # 将数据添加到列表中
     info = {
-        "商品名": good_name,
-        "评论数": comments_count,
-        "好评": good_comments_count,
-        "中评": medium_comments_count,
-        "差评": bad_comments_count
+        "good_name": good_name,  # 商品名
+        "comments_count": comments_count,  # 评论数
+        "good_comments_count": good_comments_count,  # 好评数
+        "medium_comments_count": medium_comments_count,  # 中评数
+        "bad_comments_count": bad_comments_count,  # 差评数
+        "comment_content": comment_content
     }
     data.append(info)
 
     # 打印书籍信息
-    print(info)
-
-    # 将数据保存到CSV文件中
-    filename = "book_info.csv"
-    fields = ["商品名", "价格", "评论数", "出版社", "出版年份", "好评", "中评", "差评"]
-
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(data)
-
-    print("数据已保存到", filename)
+    print(data)
 
     return data
