@@ -9,6 +9,7 @@ from JD_spider_link.utils.MongoUtil import *
 global_driver = None
 page_num = 100  # 最大爬取页数
 
+
 def on_login_button_click():
     global global_driver
     lable_value.set('运行状态：登录商城')
@@ -21,12 +22,13 @@ def run_spider_handler(*args):
     try:
         lable_value.set('运行状态：开始爬取')
         # 爬取数据
-        ret_data = start_jd_spider(global_driver, page_num)
+        ret_data,good_id = start_jd_spider(global_driver, page_num)
 
         lable_value.set('运行状态：爬取成功')
 
-        # 保存数据->mongo
-        mongo_insert(ret_data)
+        # 保存数据->mongo 原始数据
+        collection_name = 'original_data'
+        mongo_insert(ret_data, collection_name)
 
     except ValueError as e:
         # 打印错误
@@ -55,7 +57,7 @@ def init_GUI():
     DW = 200
     DH = 150
     # root_window.geometry("%dx%d+%d+%d" % (DW, DH, (SW - DW) / 2, (SH - DH) / 2))
-    root_window.geometry("%dx%d+%d+%d" % (DW, DH, SW - DW*2, DH/2))
+    root_window.geometry("%dx%d+%d+%d" % (DW, DH, SW - DW * 2, DH / 2))
     # 窗口标题
     root_window.title("爬虫")
     # 关闭窗口拉伸

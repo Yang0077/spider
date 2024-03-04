@@ -9,17 +9,19 @@ from selenium.webdriver.common.by import By
 def start_jd_spider(driver, page_num):
     global comments_count, good_comments_count, medium_comments_count, bad_comments_count, comment_content
     comments_count = 0
-    link = driver.current_url
-
-    # 发送请求并检索网页内容
-    driver.get(link)
-
-    # 初始化变量
-    data = []
 
     # 切换到新标签页
     windows = driver.window_handles
     driver.switch_to.window(windows[-1])
+
+    link = driver.current_url
+    print(f'link {link}')
+    # 发送请求并检索网页内容
+    driver.get(link)
+    print(f'driver.current_url {driver.current_url}')
+
+    # 初始化变量
+    data = []
 
     time.sleep(3)
     good_name = driver.find_element(By.CLASS_NAME, "sku-name").text
@@ -69,14 +71,14 @@ def start_jd_spider(driver, page_num):
         # comments = web.find_elements_by_xpath('//div[@class="comment-column J-comment-column"]/p')
         comment_texts = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/p')
         for comment in comment_texts:
-            comment_content.append(str(comment.text).replace("\n", ";").strip())
+            comment_content.append(str(comment.text).replace("\n", " ").strip())
         print(comment_content)
 
         if page_number == max_pages:
             break
 
         try:
-            next_page_button = driver.find_element(By.XPATH, '//div[@class="ui-page"]/a[text()="下一页"]')  # 定位下一页
+            next_page_button = driver.find_element(By.XPATH, '//div[@class="com-table-footer"]/div/div/a[text()="下一页"]')  # 定位下一页
             next_page_button.click()
             time.sleep(3)
         except NoSuchElementException as e:
@@ -85,10 +87,13 @@ def start_jd_spider(driver, page_num):
 
         page_number += 1
 
-
+    # 商品id
+    class_name = driver.find_elements(By.XPATH, '//div[@class="comment-count item fl"]/a')[0].get_attribute("class")
+    good_id = str(class_name).split()[-1].split('-')[-1]
     # 将数据添加到列表中
     info = {
         "good_name": good_name,  # 商品名
+        "good_id": good_id,  # 商品id
         "comments_count": comments_count,  # 评论数
         "good_comments_count": good_comments_count,  # 好评数
         "medium_comments_count": medium_comments_count,  # 中评数
@@ -100,4 +105,4 @@ def start_jd_spider(driver, page_num):
     # 打印书籍信息
     print(data)
 
-    return data
+    return data, good_id
