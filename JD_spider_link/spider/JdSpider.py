@@ -29,8 +29,16 @@ def start_jd_spider(driver):
     good_name = driver.find_element(By.CLASS_NAME, "sku-name").text
 
     # 点击“商品评价”按钮
-    shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li[5]")[0]
-    shop_button.click()
+    # shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li[5]")[0]
+    # if '商品评价' not in shop_button.text:
+    #     shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li[4]")[0]
+    # shop_button.click()
+    shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li")
+    for shop in shop_button:
+        if '商品评价' in shop.text:
+            shop.click()
+            break
+
     time.sleep(3)  # 爬取并输出评价信息（评论数 好评、中评、差评数目）
     comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[1]/a/em")
     for comment in comments:
@@ -96,23 +104,28 @@ def start_jd_spider(driver):
 
 
 def get_comments(driver, comment_content, sentiments, id_str):
-    time.sleep(2)
+    time.sleep(3)
     while True:
         comment_texts = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/p')
-        for comment in comment_texts:
-            comment_content.append(str(comment.text).replace("\n", " ").strip())
         sentiment_stars = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/div[1]')
-        for sentiment in sentiment_stars:
-            star = str(sentiment.get_attribute("class")[-1])[-1]
-            sentiments.append(int(star))
+
+        for i in range(len(comment_texts)):
+            comment = str(comment_texts[i].text).replace("\n", " ").strip()
+            sentiment = str(sentiment_stars[i].get_attribute("class")[-1])[-1]
+
+            if comment == '':
+                continue
+
+            comment_content.append(comment)
+            sentiments.append(int(sentiment))
+
         try:
             next_page_button = driver.find_element(By.XPATH,
-                '//div[@id="'+id_str+'"]/div[@class="com-table-footer"]/div/div/a[text()="下一页"]')  # 定位下一页
+                                                   '//div[@id="' + id_str + '"]/div[@class="com-table-footer"]/div/div/a[text()="下一页"]')  # 定位下一页
             next_page_button.click()
-            time.sleep(2)
+            time.sleep(3)
         except Exception as e:
             print(f'ERROR: {e}')
             break
 
     return driver, comment_content, sentiments
-

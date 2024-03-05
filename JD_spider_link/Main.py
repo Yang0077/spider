@@ -1,10 +1,16 @@
 import threading
+import time
 from tkinter import *
 from tkinter.ttk import *
 
+from PIL import ImageTk
+
 from JD_spider_link.spider.JdSpider import start_jd_spider
 from JD_spider_link.spider.LoginAndGetCookie import login_and_cookies
-from JD_spider_link.utils.MongoUtil import *
+from JD_spider_link.analyze.AnalyzeSentiment import *
+from JD_spider_link.analyze.CleanData import *
+from JD_spider_link.analyze.CreateWordCloud import *
+
 
 global_driver = None
 page_num = 100  # 最大爬取页数
@@ -29,6 +35,17 @@ def run_spider_handler(*args):
         # 保存数据->mongo 原始数据
         collection_name = 'original_data'
         mongo_insert(ret_data, collection_name)
+
+        # 清洗数据
+        lable_value.set('运行状态：数据清洗')
+        cl_data = clean_data(good_id)
+        lable_value.set('运行状态：数据清洗完成')
+        # 分词
+        as_data = analyze_sentiment(cl_data)
+        # 画词云图
+        lable_value.set('运行状态：画词云图')
+        create_wordCloud(as_data, good_id)
+        lable_value.set('运行状态：词云图生成')
 
     except ValueError as e:
         # 打印错误
