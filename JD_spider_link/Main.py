@@ -22,7 +22,7 @@ def run_spider_handler(*args):
     try:
         lable_value.set('运行状态：开始爬取')
         # 爬取数据
-        ret_data,good_id = start_jd_spider(global_driver, page_num)
+        ret_data, good_id = start_jd_spider(global_driver)
 
         lable_value.set('运行状态：爬取成功')
 
@@ -55,7 +55,7 @@ def init_GUI():
     SW = root_window.winfo_screenwidth()
     SH = root_window.winfo_screenheight()
     DW = 200
-    DH = 150
+    DH = 120
     # root_window.geometry("%dx%d+%d+%d" % (DW, DH, (SW - DW) / 2, (SH - DH) / 2))
     root_window.geometry("%dx%d+%d+%d" % (DW, DH, SW - DW * 2, DH / 2))
     # 窗口标题
@@ -70,22 +70,12 @@ def init_GUI():
     # 爬虫按钮
     button = Button(root_window, width=20, text="爬取数据", command=lambda: thread_it(run_spider_handler))
     button.grid(row=1, column=0, padx=24, pady=0)
-    # 页数
-    global page_num
-    page_num = StringVar()
-    entry = Entry(root_window, width=18, textvariable=page_num)  # 设置文本颜色为灰色以模仿占位符
-    entry.insert(0, "输入爬取页数(默认100)")  # 在Entry中插入提示文本
-    # 当Entry控件获取焦点时，清除提示文本
-    entry.bind("<FocusIn>", lambda event: entry.delete(0, END) if entry.get() == "输入爬取页数(默认100)" else None)
-    # 当Entry控件失去焦点且内容为空时，重新插入提示文本
-    entry.bind("<FocusOut>", lambda event: entry.insert(0, "输入爬取页数(默认100)") if not entry.get() else None)
-    # 使用grid布局管理器放置Entry控件
-    entry.grid(row=2, column=0, padx=22, pady=5)
+
     # 处理状态
     global lable_value
     lable_value = StringVar()
     lable_value.set('运行状态：未启动')
-    Label(root_window, textvariable=lable_value, font=('微软雅黑', 12)).grid(row=3, column=0, padx=22, pady=5)
+    Label(root_window, textvariable=lable_value, font=('微软雅黑', 12)).grid(row=2, column=0, padx=22, pady=5)
 
     # 使窗口处于显示状态
     root_window.mainloop()
