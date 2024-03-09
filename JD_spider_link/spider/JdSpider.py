@@ -97,7 +97,7 @@ def start_jd_spider(driver):
     }
     data.append(info)
     # 打印书籍信息
-    print(data)
+    # print(data)
 
     return data, good_id
 

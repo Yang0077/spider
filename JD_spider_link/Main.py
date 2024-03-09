@@ -25,6 +25,7 @@ def on_login_button_click():
 
 # 运行爬虫按钮点击事件
 def run_spider_handler(*args):
+    ks = time.time()
     try:
         lable_value.set('运行状态：开始爬取')
         # 爬取数据
@@ -53,7 +54,7 @@ def run_spider_handler(*args):
         print("错误信息---" + str(e))
         lable_value.set('运行状态：爬取失败')
         pass
-
+    print(f'运行时间{time.time() - ks}')
 
 def thread_it(func, *args):
     # 打包函数进线程

@@ -20,7 +20,7 @@ def analyze_sentiment(good_id):
     pos = pos_comment.union(pos_emotion)
     # 负面
     neg = neg_comment.union(neg_emotion)
-    sentiment_score = []
+    sentiment_score_1 = []
 
     for words in comment_data['segmented_text']:
         words = str(words).split()
@@ -42,16 +42,16 @@ def analyze_sentiment(good_id):
         else:
             # 中性
             score = -1
-        sentiment_score.append(score)
+        sentiment_score_1.append(score)
 
-    comment_data['sentiment_score'] = sentiment_score
+    comment_data['sentiment_score_1'] = sentiment_score_1
 
     documents_to_update = []
 
-    sentence_score = []
+    sentiment_score_2 = []
     for sentence in comment_data['comment_content']:
-        sentence_score.append(DictClassifier().analyse_sentence(sentence, runout_filepath='log.txt'))
-    comment_data['sentence_score'] = sentence_score
+        sentiment_score_2.append(DictClassifier().analyse_sentence(sentence, runout_filepath='log.txt'))
+    comment_data['sentiment_score_2'] = sentiment_score_2
 
     for i in range(len(_ids)):
         documents_to_update.append({
@@ -60,8 +60,8 @@ def analyze_sentiment(good_id):
                 'comment_content': comment_data['comment_content'][i],
                 'comment_star': int(comment_data['comment_star'][i]),
                 'segmented_text': comment_data['segmented_text'][i],
-                'sentiment_score': comment_data['sentiment_score'][i],
-                'sentence_score': int(comment_data['sentence_score'][i])
+                'sentiment_score_1': comment_data['sentiment_score_1'][i],
+                'sentiment_score_2': int(comment_data['sentiment_score_2'][i])
             }
         })
 

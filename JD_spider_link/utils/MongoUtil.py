@@ -73,3 +73,29 @@ def mongo_update_batch(collection_name, update_data):
                                              {"$set": {"comment_data": doc["comment_data"]}}) for doc in batch]
         result = collection.bulk_write(bulk_operations)
         print("Updated", result.modified_count, "documents in batch", i // batch_size)
+
+
+def get_all_clean_data():
+    db = client[db_name]
+    collection = db['original_data']
+    data = collection.find()
+    good_ids = []
+    comment_content = []
+    sentiment_score_1 = []
+    sentiment_score_2 = []
+    for doc in data:
+        good_ids.append(doc['good_id'])
+    for good_id in good_ids:
+        collection = db['clean_data_{}'.format(good_id)]
+        data = collection.find()
+        for doc in data:
+            comment_content.append(doc['comment_data']['comment_content'])
+            sentiment_score_1.append(doc['comment_data']['sentiment_score_1'])
+            sentiment_score_2.append(doc['comment_data']['sentiment_score_2'])
+
+    result = {
+        'comment_content': comment_content,
+        'sentiment_score_1': sentiment_score_1,
+        'sentiment_score_2': sentiment_score_2
+    }
+    return result
