@@ -40,12 +40,13 @@ def run_spider_handler(*args):
         lable_value.set('运行状态：数据清洗')
         cl_data = clean_data(good_id)
         lable_value.set('运行状态：数据清洗完成')
-        # 分词
-        as_data = analyze_sentiment(cl_data)
         # 画词云图
         lable_value.set('运行状态：画词云图')
-        create_wordCloud(as_data, good_id)
+        create_wordCloud(cl_data, good_id)
         lable_value.set('运行状态：词云图生成')
+        # 情感分析
+        analyze_sentiment(good_id)
+        lable_value.set('运行状态：情感分析完成')
 
     except ValueError as e:
         # 打印错误
@@ -93,6 +94,9 @@ def init_GUI():
     lable_value = StringVar()
     lable_value.set('运行状态：未启动')
     Label(root_window, textvariable=lable_value, font=('微软雅黑', 12)).grid(row=2, column=0, padx=22, pady=5)
+
+    # 设置窗口总是显示在其他程序之前
+    root_window.attributes('-topmost', True)
 
     # 使窗口处于显示状态
     root_window.mainloop()

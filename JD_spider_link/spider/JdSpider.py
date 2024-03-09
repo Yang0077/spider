@@ -1,4 +1,4 @@
-import csv
+import datetime
 import time
 
 from bs4 import BeautifulSoup
@@ -25,107 +25,120 @@ def start_jd_spider(driver):
     # 初始化变量
     data = []
 
-    time.sleep(3)
+    time.sleep(5)
     good_name = driver.find_element(By.CLASS_NAME, "sku-name").text
+    # 商品id
+    class_name = driver.find_elements(By.XPATH, '//div[@class="comment-count item fl"]/a')[0].get_attribute("class")
+    good_id = str(class_name).split()[-1].split('-')[-1]
 
     # 点击“商品评价”按钮
-    # shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li[5]")[0]
-    # if '商品评价' not in shop_button.text:
-    #     shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li[4]")[0]
-    # shop_button.click()
     shop_button = driver.find_elements(By.XPATH, "//*[@id='detail']/div[1]/ul/li")
     for shop in shop_button:
         if '商品评价' in shop.text:
             shop.click()
             break
 
-    time.sleep(3)  # 爬取并输出评价信息（评论数 好评、中评、差评数目）
-    comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[1]/a/em")
-    for comment in comments:
-        comment_text = comment.text.strip("()+")
-        if "万" in comment_text:
-            comment_text = str(int(float(comment_text.strip("万")) * 10000))
-        comments_count = int(comment_text)
-
-    good_comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[5]/a/em")
-    for comment in good_comments:
-        comment_text = comment.text.strip("()+")
-        if "万" in comment_text:
-            comment_text = str(int(float(comment_text.strip("万")) * 10000))
-        good_comments_count = int(comment_text)
-
-    medium_comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[6]/a/em")
-    for comment in medium_comments:
-        comment_text = comment.text.strip("()+")
-        if "万" in comment_text:
-            comment_text = str(int(float(comment_text.strip("万")) * 10000))
-        medium_comments_count = int(comment_text)
-
-    bad_comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[7]/a/em")
-    for comment in bad_comments:
-        comment_text = comment.text.strip("()+")
-        if "万" in comment_text:
-            comment_text = str(int(float(comment_text.strip("万")) * 10000))
-        bad_comments_count = int(comment_text)
+    time.sleep(3)
+    # 爬取并输出评价信息（评论数 好评、中评、差评数目）
+    # comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[1]/a/em")
+    # for comment in comments:
+    #     comment_text = comment.text.strip("()+")
+    #     if "万" in comment_text:
+    #         comment_text = str(int(float(comment_text.strip("万")) * 10000))
+    #     comments_count = int(comment_text)
+    #
+    # good_comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[5]/a/em")
+    # for comment in good_comments:
+    #     comment_text = comment.text.strip("()+")
+    #     if "万" in comment_text:
+    #         comment_text = str(int(float(comment_text.strip("万")) * 10000))
+    #     good_comments_count = int(comment_text)
+    #
+    # medium_comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[6]/a/em")
+    # for comment in medium_comments:
+    #     comment_text = comment.text.strip("()+")
+    #     if "万" in comment_text:
+    #         comment_text = str(int(float(comment_text.strip("万")) * 10000))
+    #     medium_comments_count = int(comment_text)
+    #
+    # bad_comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[7]/a/em")
+    # for comment in bad_comments:
+    #     comment_text = comment.text.strip("()+")
+    #     if "万" in comment_text:
+    #         comment_text = str(int(float(comment_text.strip("万")) * 10000))
+    #     bad_comments_count = int(comment_text)
 
     # 评论内容
     comment_content = []
     # 评论星级
-    sentiments = []
+    comment_star = []
 
     # 分别爬取好评 中评 差评
     driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[5]/a")[0].click()
-    driver, comment_content, sentiments = get_comments(driver, comment_content, sentiments, 'comment-4')
+    driver, comment_content, comment_star = get_comments(driver, comment_content, comment_star, 'comment-4')
     driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[6]/a")[0].click()
-    driver, comment_content, sentiments = get_comments(driver, comment_content, sentiments, 'comment-5')
+    driver, comment_content, comment_star = get_comments(driver, comment_content, comment_star, 'comment-5')
     driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[7]/a")[0].click()
-    driver, comment_content, sentiments = get_comments(driver, comment_content, sentiments, 'comment-6')
+    driver, comment_content, comment_star = get_comments(driver, comment_content, comment_star, 'comment-6')
 
-    # 商品id
-    class_name = driver.find_elements(By.XPATH, '//div[@class="comment-count item fl"]/a')[0].get_attribute("class")
-    good_id = str(class_name).split()[-1].split('-')[-1]
+    create_time = datetime.datetime.now()
+
     # 将数据添加到列表中
     info = {
         "good_name": good_name,  # 商品名
         "good_id": good_id,  # 商品id
-        "comments_count": comments_count,  # 评论数
-        "good_comments_count": good_comments_count,  # 好评数
-        "medium_comments_count": medium_comments_count,  # 中评数
-        "bad_comments_count": bad_comments_count,  # 差评数
+        # "comments_count": comments_count,  # 评论数
+        # "good_comments_count": good_comments_count,  # 好评数
+        # "medium_comments_count": medium_comments_count,  # 中评数
+        # "bad_comments_count": bad_comments_count,  # 差评数
+        'create_time': create_time,
         "comment_content": comment_content,
-        "sentiment": sentiments
+        "comment_star": comment_star
     }
     data.append(info)
-
     # 打印书籍信息
     print(data)
 
     return data, good_id
 
 
-def get_comments(driver, comment_content, sentiments, id_str):
+def get_comments(driver, comment_content, comment_star, id_str):
+    page = 1
     time.sleep(3)
     while True:
+        print(f'爬取 {choose(id_str)} 第{page}页 ')
+
         comment_texts = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/p')
-        sentiment_stars = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/div[1]')
+        comment_stars = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/div[1]')
 
         for i in range(len(comment_texts)):
             comment = str(comment_texts[i].text).replace("\n", " ").strip()
-            sentiment = str(sentiment_stars[i].get_attribute("class")[-1])[-1]
+            sentiment = str(comment_stars[i].get_attribute("class")[-1])[-1]
 
             if comment == '':
                 continue
 
             comment_content.append(comment)
-            sentiments.append(int(sentiment))
+            comment_star.append(int(sentiment))
 
         try:
             next_page_button = driver.find_element(By.XPATH,
                                                    '//div[@id="' + id_str + '"]/div[@class="com-table-footer"]/div/div/a[text()="下一页"]')  # 定位下一页
             next_page_button.click()
+            page += 1
             time.sleep(3)
         except Exception as e:
-            print(f'ERROR: {e}')
+            # print(f'ERROR: {e}')
+            time.sleep(0.5)
             break
 
-    return driver, comment_content, sentiments
+    return driver, comment_content, comment_star
+
+
+def choose(str_id):
+    if str_id == 'comment-4':
+        return '好评'
+    elif str_id == 'comment-5':
+        return '中评'
+    elif str_id == 'comment-6':
+        return '差评'
