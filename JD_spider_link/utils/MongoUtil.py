@@ -71,14 +71,14 @@ def get_train_data():
     sentiment_score_2 = []
     segmented_text = []
     for doc in result:
-        comment_content.append(doc['comment_data']['comment_content'])
-        segmented_text.append(doc['comment_data']['segmented_text'])
-        sentiment_score_1.append(doc['comment_data']['sentiment_score_1'])
-        sentiment_score_2.append(doc['comment_data']['sentiment_score_2'])
+        comment_content.append(doc['comment_content'])
+        segmented_text.append(doc['segmented_text'])
+        sentiment_score_1.append(doc['comment_content_score'])
+        sentiment_score_2.append(doc['segmented_text_score'])
     data = {
         'comment_content': comment_content,
         'segmented_text': segmented_text,
-        'sentiment_score_1': sentiment_score_1,
-        'sentiment_score_2': sentiment_score_2
+        'comment_content_score': sentiment_score_1,
+        'segmented_text_score': sentiment_score_2
     }
     return data

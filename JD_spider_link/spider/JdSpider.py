@@ -7,11 +7,11 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
-def start_jd_spider(driver, link):
+def start_jd_spider(driver):
     # 切换到新标签页
-    # windows = driver.window_handles
-    # driver.switch_to.window(windows[-1])
-    # # 获取当前窗口的句柄（即当前标签页的句柄）
+    windows = driver.window_handles
+    driver.switch_to.window(windows[-1])
+    # 获取当前窗口的句柄（即当前标签页的句柄）
     # current_window_handle = driver.current_window_handle
     # # 获取所有窗口的句柄
     # all_window_handles = driver.window_handles
@@ -21,7 +21,7 @@ def start_jd_spider(driver, link):
     #         # 切换到新标签页
     #         driver.switch_to.window(window_handle)
     #         break
-    # link = driver.current_url
+    link = driver.current_url
 
     if is_jd_url_format(str(link)) is False:
         print(f'链接 {link} 错误')
@@ -30,13 +30,13 @@ def start_jd_spider(driver, link):
 
     print(f'link {link}')
     # 发送请求并检索网页内容
-    driver.get(link)
+    # driver.get(link)
     print(f'driver.current_url {driver.current_url}')
 
     # 初始化变量
     data = []
 
-    time.sleep(5)
+    time.sleep(2)
     good_name = driver.find_element(By.CLASS_NAME, "sku-name").text
     # 商品id
     class_name = driver.find_elements(By.XPATH, '//div[@class="comment-count item fl"]/a')[0].get_attribute("class")
@@ -50,7 +50,7 @@ def start_jd_spider(driver, link):
             shop.click()
             break
 
-    time.sleep(3)
+    time.sleep(2.5)
     # 爬取并输出评价信息（评论数 好评、中评、差评数目）
     # comments = driver.find_elements(By.XPATH, "//*[@id='comment']/div[2]/div[2]/div[1]/ul/li[1]/a/em")
     # for comment in comments:
@@ -116,7 +116,7 @@ def start_jd_spider(driver, link):
 
 def get_comments(driver, comment_content, comment_star, id_str):
     page = 1
-    time.sleep(3)
+    time.sleep(2)
     while True:
         print(f'爬取 {good_id} {choose(id_str)} 第{page}页 ')
 
@@ -138,7 +138,7 @@ def get_comments(driver, comment_content, comment_star, id_str):
                                                    '//div[@id="' + id_str + '"]/div[@class="com-table-footer"]/div/div/a[text()="下一页"]')  # 定位下一页
             next_page_button.click()
             page += 1
-            time.sleep(3)
+            time.sleep(1)
         except Exception as e:
             # print(f'ERROR: {e}')
             time.sleep(0.5)

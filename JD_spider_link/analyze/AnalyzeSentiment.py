@@ -53,7 +53,7 @@ def analyze_sentiment(good_id):
     # for sentence in comment_data['comment_content']:
     for sentence in tqdm(comment_data['comment_content'], desc="Analyzing Sentences"):
         comment_content_score.append(DictClassifier().analyse_sentence(sentence,
-                                                                       runout_filepath='analyze/file/log_' + good_id + '.txt'))
+                                                                       runout_filepath='analyze/log/log_' + good_id + '.txt'))
     comment_data['comment_content_score'] = comment_content_score
 
     for i in range(len(_ids)):

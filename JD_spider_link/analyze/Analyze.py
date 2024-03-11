@@ -7,16 +7,15 @@ from JD_spider_link.analyze.CleanData import *
 from JD_spider_link.utils.MongoUtil import *
 
 
-def analyze(good_id):
+def analyze(arg1, agr2):
     # 加载爬取的中文评论数据，假设数据包含两列：'segmented_text'为评论文本，sentiment为情感标签或客户满意度评分
 
     # data = pd.DataFrame(clean_data(good_id))
     data = get_train_data()
 
     # 分割特征和标签
-    X = data['comment_content']
-    y = data[good_id]
-
+    X = data[arg1]
+    y = data[agr2]
     # 划分训练集和测试集
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -41,5 +40,5 @@ def analyze(good_id):
 
 
 if __name__ == '__main__':
-    analyze("sentiment_score_1")
-    analyze("sentiment_score_2")
+    analyze("comment_content", "comment_content_score")
+    analyze("segmented_text", "segmented_text_score")
