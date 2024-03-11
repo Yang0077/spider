@@ -11,7 +11,7 @@ def analyze(good_id):
     # 加载爬取的中文评论数据，假设数据包含两列：'segmented_text'为评论文本，sentiment为情感标签或客户满意度评分
 
     # data = pd.DataFrame(clean_data(good_id))
-    data = get_all_clean_data()
+    data = get_train_data()
 
     # 分割特征和标签
     X = data['comment_content']

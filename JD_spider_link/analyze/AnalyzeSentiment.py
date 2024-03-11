@@ -1,14 +1,14 @@
 import pandas as pd
 from bson.objectid import ObjectId
+from tqdm import tqdm
+
 from JD_spider_link.utils.MongoUtil import *
 from JD_spider_link.analyze.judge_polarity import *
 
 
 def analyze_sentiment(good_id):
-    data = mongo_query_clean('clean_data_'+good_id, query={'good_id': str(good_id)})
-    _ids = data['_id']
-
-    comment_data = data['comment_data']
+    comment_data = mongo_query_clean('clean_data_' + good_id, query={'good_id': str(good_id)})
+    _ids = comment_data['_id']
 
     pos_comment = load_file('analyze/file/正面评价词语（中文）.txt')
     pos_emotion = load_file('analyze/file/正面情感词语（中文）.txt')
@@ -20,9 +20,10 @@ def analyze_sentiment(good_id):
     pos = pos_comment.union(pos_emotion)
     # 负面
     neg = neg_comment.union(neg_emotion)
-    sentiment_score_1 = []
+    segmented_text_score = []
 
-    for words in comment_data['segmented_text']:
+    # for words in comment_data['segmented_text']:
+    for words in tqdm(comment_data['segmented_text'], desc="Processing Comments"):
         words = str(words).split()
         positive_count = 0
         negative_count = 0
@@ -42,30 +43,29 @@ def analyze_sentiment(good_id):
         else:
             # 中性
             score = -1
-        sentiment_score_1.append(score)
+        segmented_text_score.append(score)
 
-    comment_data['sentiment_score_1'] = sentiment_score_1
+    comment_data['segmented_text_score'] = segmented_text_score
 
-    documents_to_update = []
+    documents_to_insert = []
 
-    sentiment_score_2 = []
-    for sentence in comment_data['comment_content']:
-        sentiment_score_2.append(DictClassifier().analyse_sentence(sentence, runout_filepath='log.txt'))
-    comment_data['sentiment_score_2'] = sentiment_score_2
+    comment_content_score = []
+    # for sentence in comment_data['comment_content']:
+    for sentence in tqdm(comment_data['comment_content'], desc="Analyzing Sentences"):
+        comment_content_score.append(DictClassifier().analyse_sentence(sentence,
+                                                                       runout_filepath='analyze/file/log_' + good_id + '.txt'))
+    comment_data['comment_content_score'] = comment_content_score
 
     for i in range(len(_ids)):
-        documents_to_update.append({
-            '_id': ObjectId(_ids[i]),
-            'comment_data': {
-                'comment_content': comment_data['comment_content'][i],
-                'comment_star': int(comment_data['comment_star'][i]),
-                'segmented_text': comment_data['segmented_text'][i],
-                'sentiment_score_1': comment_data['sentiment_score_1'][i],
-                'sentiment_score_2': int(comment_data['sentiment_score_2'][i])
-            }
+        documents_to_insert.append({
+            'comment_content': comment_data['comment_content'][i],
+            'comment_star': int(comment_data['comment_star'][i]),
+            'segmented_text': comment_data['segmented_text'][i],
+            'comment_content_score': comment_data['comment_content_score'][i],
+            'segmented_text_score': int(comment_data['segmented_text_score'][i])
         })
 
-    mongo_update_batch('clean_data_'+good_id, documents_to_update)
+    mongo_insert(documents_to_insert, 'train_data')
 
     # print(data)
 

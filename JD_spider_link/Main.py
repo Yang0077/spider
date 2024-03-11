@@ -3,14 +3,11 @@ import time
 from tkinter import *
 from tkinter.ttk import *
 
-from PIL import ImageTk
-
-from JD_spider_link.spider.JdSpider import start_jd_spider
-from JD_spider_link.spider.LoginAndGetCookie import login_and_cookies
 from JD_spider_link.analyze.AnalyzeSentiment import *
 from JD_spider_link.analyze.CleanData import *
 from JD_spider_link.analyze.CreateWordCloud import *
-
+from JD_spider_link.spider.JdSpider import start_jd_spider
+from JD_spider_link.spider.LoginAndGetCookie import login_and_cookies
 
 global_driver = None
 page_num = 100  # 最大爬取页数
@@ -49,12 +46,14 @@ def run_spider_handler(*args):
         analyze_sentiment(good_id)
         lable_value.set('运行状态：情感分析完成')
 
-    except ValueError as e:
+    except Exception as e:
         # 打印错误
         print("错误信息---" + str(e))
         lable_value.set('运行状态：爬取失败')
         pass
-    print(f'运行时间{time.time() - ks}')
+
+    print("运行时间：{:.2f}s".format((time.time() - ks)))
+
 
 def thread_it(func, *args):
     # 打包函数进线程

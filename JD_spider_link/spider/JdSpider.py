@@ -1,4 +1,5 @@
 import datetime
+import re
 import time
 
 from bs4 import BeautifulSoup
@@ -6,17 +7,27 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
-def start_jd_spider(driver):
-    comments_count = 0
-    good_comments_count = 0
-    medium_comments_count = 0
-    bad_comments_count = 0
-
+def start_jd_spider(driver, link):
     # 切换到新标签页
-    windows = driver.window_handles
-    driver.switch_to.window(windows[-1])
+    # windows = driver.window_handles
+    # driver.switch_to.window(windows[-1])
+    # # 获取当前窗口的句柄（即当前标签页的句柄）
+    # current_window_handle = driver.current_window_handle
+    # # 获取所有窗口的句柄
+    # all_window_handles = driver.window_handles
+    # # 遍历所有窗口的句柄，判断哪个窗口句柄不等于当前窗口句柄，即为新打开的标签页
+    # for window_handle in all_window_handles:
+    #     if window_handle != current_window_handle:
+    #         # 切换到新标签页
+    #         driver.switch_to.window(window_handle)
+    #         break
+    # link = driver.current_url
 
-    link = driver.current_url
+    if is_jd_url_format(str(link)) is False:
+        print(f'链接 {link} 错误')
+        # 抛出一个自定义异常
+        raise ValueError(f'链接 {link} 错误')
+
     print(f'link {link}')
     # 发送请求并检索网页内容
     driver.get(link)
@@ -29,6 +40,7 @@ def start_jd_spider(driver):
     good_name = driver.find_element(By.CLASS_NAME, "sku-name").text
     # 商品id
     class_name = driver.find_elements(By.XPATH, '//div[@class="comment-count item fl"]/a')[0].get_attribute("class")
+    global good_id
     good_id = str(class_name).split()[-1].split('-')[-1]
 
     # 点击“商品评价”按钮
@@ -106,7 +118,7 @@ def get_comments(driver, comment_content, comment_star, id_str):
     page = 1
     time.sleep(3)
     while True:
-        print(f'爬取 {choose(id_str)} 第{page}页 ')
+        print(f'爬取 {good_id} {choose(id_str)} 第{page}页 ')
 
         comment_texts = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/p')
         comment_stars = driver.find_elements(By.XPATH, '//div[@class="comment-column J-comment-column"]/div[1]')
@@ -142,3 +154,15 @@ def choose(str_id):
         return '中评'
     elif str_id == 'comment-6':
         return '差评'
+
+
+def is_jd_url_format(url):
+    # 定义正则表达式模式
+    # pattern = r"https://item\.jd\.com/\w+\.html"
+    # 只匹配数字
+    pattern = r"https://item\.jd\.com/\d+\.html"
+    # 使用正则表达式进行匹配
+    if re.match(pattern, url):
+        return True
+    else:
+        return False

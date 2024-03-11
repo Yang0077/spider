@@ -44,11 +44,10 @@ def clean_data(good_id):
         insert_data.append({
             'good_id': good_id,
             'create_time': create_time,
-            'comment_data': {
-                'comment_content': data['comment_content'][i],
-                'comment_star': int(data['comment_star'][i]),
-                'segmented_text': data['segmented_text'][i]
-            }
+            'comment_content': data['comment_content'][i],
+            'comment_star': int(data['comment_star'][i]),
+            'segmented_text': data['segmented_text'][i]
+
         })
 
     mongo_insert(insert_data, clean_collection_name+good_id)

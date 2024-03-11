@@ -47,55 +47,38 @@ def mongo_query_clean(collection_name, query={}):
 
     for result in results:
         _ids.append(result['_id'])
-        comment_content.append(result['comment_data']['comment_content'])
-        comment_star.append(result['comment_data']['comment_star'])
-        segmented_text.append(result['comment_data']['segmented_text'])
+        comment_content.append(result['comment_content'])
+        comment_star.append(result['comment_star'])
+        segmented_text.append(result['segmented_text'])
 
     out = {
         '_id': _ids,
-        'comment_data': {
-            'comment_content': comment_content,
-            'comment_star': comment_star,
-            'segmented_text': segmented_text
-        }}
+        'comment_content': comment_content,
+        'comment_star': comment_star,
+        'segmented_text': segmented_text
+        }
     return out
 
 
-# 更新MongoDB数据的方法
-def mongo_update_batch(collection_name, update_data):
+def get_train_data():
     db = client[db_name]
-    collection = db[collection_name]
 
-    batch_size = 1000
-    for i in range(0, len(update_data), batch_size):
-        batch = update_data[i:i + batch_size]
-        bulk_operations = [pymongo.UpdateOne({"_id": doc["_id"]},
-                                             {"$set": {"comment_data": doc["comment_data"]}}) for doc in batch]
-        result = collection.bulk_write(bulk_operations)
-        print("Updated", result.modified_count, "documents in batch", i // batch_size)
+    collection = db['train_data']
+    result = collection.find()
 
-
-def get_all_clean_data():
-    db = client[db_name]
-    collection = db['original_data']
-    data = collection.find()
-    good_ids = []
     comment_content = []
     sentiment_score_1 = []
     sentiment_score_2 = []
-    for doc in data:
-        good_ids.append(doc['good_id'])
-    for good_id in good_ids:
-        collection = db['clean_data_{}'.format(good_id)]
-        data = collection.find()
-        for doc in data:
-            comment_content.append(doc['comment_data']['comment_content'])
-            sentiment_score_1.append(doc['comment_data']['sentiment_score_1'])
-            sentiment_score_2.append(doc['comment_data']['sentiment_score_2'])
-
-    result = {
+    segmented_text = []
+    for doc in result:
+        comment_content.append(doc['comment_data']['comment_content'])
+        segmented_text.append(doc['comment_data']['segmented_text'])
+        sentiment_score_1.append(doc['comment_data']['sentiment_score_1'])
+        sentiment_score_2.append(doc['comment_data']['sentiment_score_2'])
+    data = {
         'comment_content': comment_content,
+        'segmented_text': segmented_text,
         'sentiment_score_1': sentiment_score_1,
         'sentiment_score_2': sentiment_score_2
     }
-    return result
+    return data
