@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
-def start_jd_spider(driver):
+def start_jd_spider(driver,link):
     # 切换到新标签页
     windows = driver.window_handles
     driver.switch_to.window(windows[-1])
@@ -21,7 +21,7 @@ def start_jd_spider(driver):
     #         # 切换到新标签页
     #         driver.switch_to.window(window_handle)
     #         break
-    link = driver.current_url
+    # link = driver.current_url
 
     if is_jd_url_format(str(link)) is False:
         print(f'链接 {link} 错误')
@@ -30,7 +30,7 @@ def start_jd_spider(driver):
 
     print(f'link {link}')
     # 发送请求并检索网页内容
-    # driver.get(link)
+    driver.get(link)
     print(f'driver.current_url {driver.current_url}')
 
     # 初始化变量

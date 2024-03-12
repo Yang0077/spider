@@ -82,3 +82,14 @@ def get_train_data():
         'segmented_text_score': sentiment_score_2
     }
     return data
+
+
+def get_good_id():
+    db = client[db_name]
+    collection = db['original_data']
+    results = collection.find()
+    good_id_list = []
+    for result in results:
+        good_id_list.append(result['good_id'])
+
+    return good_id_list
