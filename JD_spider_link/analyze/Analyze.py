@@ -35,10 +35,10 @@ def analyze():
 
     # 评估模型性能
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"{arg1} {arg2} 模型准确率：{accuracy}")
+    print(f"模型准确率：{accuracy}")
 
     # 打印分类报告
-    # print(classification_report(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
     cross_verification(X, y)
 
     # 保存模型到文件
@@ -63,6 +63,21 @@ def cross_verification(X, y):
     print("平均交叉验证得分:", cv_scores.mean())
 
 
-if __name__ == '__main__':
+def model_prediction(good_id):
+    comment_data = mongo_query_clean('clean_data_' + good_id, query={'good_id': str(good_id)})
+    _ids = comment_data['_id']
 
-    analyze()
+    comment_data = comment_data['segmented_text']
+
+    loaded_model = joblib.load('analyze/decision_tree_model.joblib')
+    # 使用TF-IDF向量化文本特征
+    tfidf_vectorizer = TfidfVectorizer(max_features=1000)  # 可以根据需要调整特征数量
+
+    # 对评论数据进行转换
+    X_new = tfidf_vectorizer.fit_transform(comment_data)
+
+    # 进行预测
+    y_pred_new = loaded_model.predict(X_new)
+
+    for i in range(len(_ids)):
+        mongo_update(clean_collection_name + good_id, _ids[i], 'predict_result', int(y_pred_new[i]))

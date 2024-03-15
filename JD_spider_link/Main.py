@@ -3,7 +3,7 @@ import time
 from tkinter import *
 from tkinter.ttk import *
 
-from JD_spider_link.analyze.AnalyzeSentiment import *
+from JD_spider_link.analyze.Analyze import *
 from JD_spider_link.analyze.CleanData import *
 from JD_spider_link.analyze.CreateWordCloud import *
 from JD_spider_link.spider.JdSpider import start_jd_spider
@@ -26,7 +26,7 @@ def run_spider_handler(*args):
     try:
         lable_value.set('运行状态：开始爬取')
         # 爬取数据
-        ret_data, good_id = start_jd_spider(global_driver)
+        ret_data, good_id = start_jd_spider(global_driver, None)
 
         lable_value.set('运行状态：爬取成功')
 
@@ -42,9 +42,9 @@ def run_spider_handler(*args):
         lable_value.set('运行状态：画词云图')
         create_wordCloud(cl_data, good_id)
         lable_value.set('运行状态：词云图生成')
-        # 情感分析
-        analyze_sentiment(good_id)
-        lable_value.set('运行状态：情感分析完成')
+        # 情感分析 预测
+        model_prediction(good_id)
+        lable_value.set('运行状态：情感预测完成')
 
     except Exception as e:
         # 打印错误

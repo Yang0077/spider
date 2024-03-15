@@ -6,6 +6,7 @@ from JD_spider_link.utils.MongoUtil import *
 from JD_spider_link.analyze.judge_polarity import *
 
 
+# 情感分析 根据情感词典标记情感标签
 def analyze_sentiment(good_id):
     comment_data = mongo_query_clean('clean_data_' + good_id, query={'good_id': str(good_id)})
     _ids = comment_data['_id']
@@ -77,3 +78,4 @@ def load_file(path):
             data.add(line.strip())
     data = set(filter(lambda x: x != '', data))
     return data
+

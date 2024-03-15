@@ -56,7 +56,7 @@ def mongo_query_clean(collection_name, query={}):
         'comment_content': comment_content,
         'comment_star': comment_star,
         'segmented_text': segmented_text
-        }
+    }
     return out
 
 
@@ -93,3 +93,11 @@ def get_good_id():
         good_id_list.append(result['good_id'])
 
     return good_id_list
+
+
+# 更新MongoDB数据的方法
+def mongo_update(collection_name, _id, column_name, update_data):
+    db = client[db_name]
+    collection = db[collection_name]
+    collection.update_one({'_id': _id}, {'$set': {column_name: update_data}})
+
