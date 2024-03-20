@@ -16,14 +16,15 @@ def login_and_cookies():
     chrome_options.add_experimental_option("detach", True)
     driver = webdriver.Chrome(options=chrome_options)
 
-    cookie_file = '../cookie.txt'
+    cookie_file = 'cookie.txt'
     """
     处理登录和cookie的逻辑。
     如果存在cookie文件，使用cookie登录；否则提示用户登录并保存cookie。
     """
-    # 判断是否有 cookie.txt 文件
+
     driver.get("https://passport.jd.com/new/login.aspx?/")
 
+    # 判断是否有 cookie.txt 文件
     if os.path.exists(cookie_file):
         print('使用已保存的cookie登录')
         # 读取cookie文件中的内容

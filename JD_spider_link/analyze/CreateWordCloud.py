@@ -1,3 +1,5 @@
+import time
+
 import jieba
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,6 +8,8 @@ from wordcloud import WordCloud
 
 
 def create_wordCloud(data, good_id):
+    ks = time.time()
+
     text = ' '.join(data['segmented_text'])
 
     # 读取形状图片
@@ -16,5 +20,8 @@ def create_wordCloud(data, good_id):
                  .generate(text))
 
     # 保存词云图像到本地
-    wordcloud.to_file("img/"+good_id+"_wordcloud.png")
+    img = "img/"+good_id+"_wordcloud.png"
+    wordcloud.to_file(img)
 
+    print("画图耗时", time.time()-ks)
+    return img

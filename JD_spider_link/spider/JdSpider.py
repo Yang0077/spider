@@ -1,4 +1,5 @@
 import datetime
+import json
 import re
 import time
 
@@ -7,7 +8,21 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 
+def set_cookie(driver):
+    with open('cookie.txt', 'r') as file:
+        # 读取文件中的 cookie
+        cookies = json.load(file)
+        # 加载cookie信息到浏览器
+        for cookie in cookies:
+            cookie['domain'] = '.jd.com'
+            driver.add_cookie(cookie)
+    return driver
+
+
 def start_jd_spider(driver, link):
+
+    driver = set_cookie(driver)
+
     # 切换到新标签页
     windows = driver.window_handles
     driver.switch_to.window(windows[-1])

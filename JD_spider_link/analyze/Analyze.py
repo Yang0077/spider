@@ -64,6 +64,8 @@ def cross_verification(X, y):
 
 
 def model_prediction(good_id):
+    ks = time.time()
+
     comment_data = mongo_query_clean('clean_data_' + good_id, query={'good_id': str(good_id)})
     _ids = comment_data['_id']
 
@@ -81,3 +83,5 @@ def model_prediction(good_id):
 
     for i in range(len(_ids)):
         mongo_update(clean_collection_name + good_id, _ids[i], 'predict_result', int(y_pred_new[i]))
+
+    print("情感预测耗时:", time.time() - ks)

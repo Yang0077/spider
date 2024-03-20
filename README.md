@@ -12,3 +12,7 @@ JD Spider
 
 4. 运行顺序 
     2->3->1
+
+
+
+python pycharm mongo(+ Navicat)
