@@ -8,6 +8,8 @@ from wordcloud import WordCloud
 
 
 def create_wordCloud(data, good_id):
+    print("开始画图")
+
     ks = time.time()
 
     text = ' '.join(data['segmented_text'])

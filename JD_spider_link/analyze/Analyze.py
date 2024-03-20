@@ -152,6 +152,5 @@ def export_label(y_pred_new):
     img_name = 'img/' + good_id + '_prediction_distribution.png'
 
     plt.savefig(img_name)
-    plt.show()
 
     return img_name

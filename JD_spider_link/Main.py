@@ -39,7 +39,7 @@ def run_spider_handler(*args):
         lable_value.set('运行状态：数据清洗')
         global cl_data
         cl_data = clean_data(good_id)
-        lable_value.set('运行状态：数据清洗完成')
+        lable_value.set('运行状态：清洗完成')
 
     except Exception as e:
         # 打印错误
@@ -79,7 +79,7 @@ def generate_image():
         # 创建标签，并将图像显示在标签上
         img_label.configure(image=image_tk)
         img_label.image = image_tk
-        lable_value.set('运行状态：词云图生成')
+        lable_value.set('运行状态：词云生成')
 
     except Exception as e:
         print("错误信息---" + str(e))
@@ -94,7 +94,7 @@ def prediction():
         # 打开生成的图像文件
         image = Image.open(img_names[0])
         # 调整图像大小，如果需要的话
-        image = image.resize((300, 300))
+        image = image.resize((200, 150))
         # 创建ImageTk对象，用于在Tkinter中显示图像
         image_tk = ImageTk.PhotoImage(image)
         # 创建标签，并将图像显示在标签上
@@ -103,17 +103,17 @@ def prediction():
 
         image = Image.open(img_names[1])
         # 调整图像大小，如果需要的话
-        image = image.resize((300, 300))
+        image = image.resize((200, 150))
         # 创建ImageTk对象，用于在Tkinter中显示图像
         image_tk = ImageTk.PhotoImage(image)
         # 创建标签，并将图像显示在标签上
         img_label_2.configure(image=image_tk)
         img_label_2.image = image_tk
 
-        lable_value.set('运行状态：情感预测完成')
+        lable_value.set('运行状态：预测完成')
     except Exception as e:
         print("错误信息---" + str(e))
-        lable_value.set('运行状态：错误')
+        lable_value.set('运行状态：发生错误')
 
 
 # 初始化图形界面函数

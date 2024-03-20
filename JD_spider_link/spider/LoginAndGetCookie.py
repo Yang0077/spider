@@ -42,8 +42,14 @@ def login_and_cookies():
         print('需要登录')
         # 导航到登录页面
         # 等待用户登录
-        time.sleep(20)  # 第一次使用需要用户手动登录获取cookie, 可根据网络状况修改
+        time.sleep(5)  # 第一次使用需要用户手动登录获取cookie, 可根据网络状况修改
+        while True:
+            if 'https://www.jd.com/' == driver.current_url:
+                break
+            time.sleep(1)
         # 获取登录后的cookie并保存到文件
+        time.sleep(1)
+        print("登录成功!")
         dictcookies = driver.get_cookies()
         jsoncookies = json.dumps(dictcookies)
         with open(cookie_file, 'w') as f:
