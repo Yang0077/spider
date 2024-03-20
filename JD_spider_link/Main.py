@@ -1,8 +1,8 @@
 import threading
-import time
 from tkinter import *
 from tkinter.ttk import *
-from PIL import ImageTk, Image
+
+from PIL import ImageTk
 
 from JD_spider_link.analyze.Analyze import *
 from JD_spider_link.analyze.CleanData import *
@@ -89,7 +89,27 @@ def generate_image():
 def prediction():
     try:
         # 情感分析 预测
-        model_prediction(good_id)
+        img_names = model_prediction(good_id)
+
+        # 打开生成的图像文件
+        image = Image.open(img_names[0])
+        # 调整图像大小，如果需要的话
+        image = image.resize((300, 300))
+        # 创建ImageTk对象，用于在Tkinter中显示图像
+        image_tk = ImageTk.PhotoImage(image)
+        # 创建标签，并将图像显示在标签上
+        img_label_1.configure(image=image_tk)
+        img_label_1.image = image_tk
+
+        image = Image.open(img_names[1])
+        # 调整图像大小，如果需要的话
+        image = image.resize((300, 300))
+        # 创建ImageTk对象，用于在Tkinter中显示图像
+        image_tk = ImageTk.PhotoImage(image)
+        # 创建标签，并将图像显示在标签上
+        img_label_2.configure(image=image_tk)
+        img_label_2.image = image_tk
+
         lable_value.set('运行状态：情感预测完成')
     except Exception as e:
         print("错误信息---" + str(e))
@@ -128,11 +148,17 @@ def init_GUI():
     # 画图
     global img_label
     img_label = Label(root_window)
-    img_label.grid(row=1, column=0, columnspan=5, pady=6)
+    img_label.grid(row=1, column=0, columnspan=3, rowspan=2, pady=6)
     button = Button(root_window, width=16, text="画词云图", command=lambda: thread_it(generate_image))
     button.grid(row=0, column=3, padx=10, pady=5)
 
     # 预测
+    global img_label_1
+    img_label_1 = Label(root_window)
+    img_label_1.grid(row=1, column=3, columnspan=2, pady=6)
+    global img_label_2
+    img_label_2 = Label(root_window)
+    img_label_2.grid(row=2, column=3, columnspan=2, pady=6)
     button = Button(root_window, width=16, text="情感预测", command=lambda: thread_it(prediction))
     button.grid(row=0, column=4, padx=10, pady=5)
 

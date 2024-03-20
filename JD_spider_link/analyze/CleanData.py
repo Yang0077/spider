@@ -41,6 +41,8 @@ def clean_data(good_id):
     insert_data = []
     create_time = datetime.datetime.now()
     for i in range(len(data['comment_content'])):
+        if data['segmented_text'][i] is None or data['segmented_text'][i] =='':
+            data['segmented_text'][i] = data['comment_content'][i]
         insert_data.append({
             'good_id': good_id,
             'create_time': create_time,
