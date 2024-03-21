@@ -1,7 +1,5 @@
 import time
 
-import jieba
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from wordcloud import WordCloud

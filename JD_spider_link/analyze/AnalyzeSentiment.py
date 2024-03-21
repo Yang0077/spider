@@ -1,9 +1,7 @@
-import pandas as pd
-from bson.objectid import ObjectId
 from tqdm import tqdm
 
-from JD_spider_link.utils.MongoUtil import *
 from JD_spider_link.analyze.judge_polarity import *
+from JD_spider_link.utils.MongoUtil import *
 
 
 # 情感分析 根据情感词典标记情感标签

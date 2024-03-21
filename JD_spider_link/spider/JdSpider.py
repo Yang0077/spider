@@ -3,8 +3,6 @@ import json
 import re
 import time
 
-from bs4 import BeautifulSoup
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 

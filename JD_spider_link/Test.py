@@ -1,16 +1,12 @@
-import concurrent.futures
-import threading
-import time
-
+from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 
+from JD_spider_link.analyze.Analyze import *
+from JD_spider_link.analyze.AnalyzeSentiment import *
+from JD_spider_link.analyze.CleanData import *
 from JD_spider_link.spider.JdSpider import start_jd_spider
 from JD_spider_link.spider.LoginAndGetCookie import login_and_cookies
-from JD_spider_link.analyze.AnalyzeSentiment import *
-from JD_spider_link.analyze.Analyze import *
-from JD_spider_link.analyze.CleanData import *
 from JD_spider_link.utils.MongoUtil import *
-from bs4 import BeautifulSoup
 
 
 def start(key):

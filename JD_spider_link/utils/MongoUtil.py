@@ -1,6 +1,3 @@
-import datetime
-
-import pymongo
 from pymongo import MongoClient
 
 db_name = 'E-commerce_review'
